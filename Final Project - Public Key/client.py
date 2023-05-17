@@ -1,4 +1,5 @@
 import rsa,os,sys,hashlib,hmac
+from Crypto.Cipher import AES
 
 #Pre-shared key with server
 sharedKey = "GoneWithTheWind4600!"
@@ -9,31 +10,36 @@ with open(os.path.join(sys.path[0],"clientPrivateKey.pem"),"rb") as f:
     
 #get the data encrypted message from server
 with open(os.path.join(sys.path[0],"encryptedMessage.txt"),"rb") as f:
-    data = f.readlines()
+    data = f.read()
+    data = data.split(b"\n")
+    print(len(data))
     encryptedMessage = data[0].strip()
-    mac = data[1]
+    print(encryptedMessage)
+    encryptedKey = data[1].strip()
+    print(encryptedKey)
+    mac = data[2]
+    print(mac)
+    
+#decrypt AES key
+aesKey = rsa.decrypt(encryptedKey,clientPrivateKey)
+print(aesKey)
+cipher = AES.new(aesKey,AES.MODE_EAX)
 #decrypt message 
-plaintext = rsa.decrypt(encryptedMessage,clientPrivateKey)
-print("Message Received:",plaintext.decode())
+plaintext = cipher.decrypt(encryptedMessage)
+print(plaintext)
+#print("Message Received:",plaintext.decode())
 
 #function to verify message integrity
-def verifyHMAC(key, message,mac):
+'''def verifyHMAC(key, message,mac):
     key = bytes(key,'utf-8')
     #compute a comparison HMAC based on decrypted plaintext and pre-shared key
     dig = hmac.new(key,message,hashlib.sha256).hexdigest().encode()
-    print("Computed HMAC",dig)
-    print("Received HMAC",mac)
+    print("Computed HMAC:",dig.decode())
+    print("Received HMAC:",mac.decode())
     return hmac.compare_digest(mac,dig)
 
 #call function to verify message integrity
 if verifyHMAC(sharedKey,plaintext,mac) == True:
     print("Message Authenticated Successfully!")
 else:
-    print("Message Not Authenticated!")
-
-
-
-
-
-
-#mac = data[1].decode()
+    print("Message Not Authenticated!")'''
