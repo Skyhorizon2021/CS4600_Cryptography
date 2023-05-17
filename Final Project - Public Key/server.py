@@ -21,7 +21,8 @@ def calc_digest(key,message):
     return dig.hexdigest()
 
 #compute an HMAC
-mac = calc_digest('GoneWithTheWind4600!',message)
+sharedKey = "GoneWithTheWind4600!"
+mac = calc_digest(sharedKey,message)
 print(mac)
 
 #write encrypted message to file
