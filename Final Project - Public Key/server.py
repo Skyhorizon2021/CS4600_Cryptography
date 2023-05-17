@@ -11,7 +11,7 @@ with open(os.path.join(sys.path[0],"clientPublicKey.pem"),"rb") as f:
     clientPublicKey = rsa.PublicKey.load_pkcs1(f.read())
 
 #generate random AES Key
-aesKey = b"GoneWithTheWind4600!"
+aesKey = get_random_bytes(16)
 print("AES Key:",aesKey)
 cipher = AES.new(aesKey,AES.MODE_EAX)
 #encrypt message with AES key
